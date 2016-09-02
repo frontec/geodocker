@@ -1,0 +1,53 @@
+version: '2'
+services:
+#Maintainer: jailbirt.
+#By default I override your local node_modules directory.
+#This is intended for working without installing dependencies by using development images.
+  
+  #Geoserver
+  geoserver:
+    image: interactar/geodocker:geoserver-2.5.3
+    container_name: geodocker
+    hostname: geodocker
+    domainname: webgis.frontec.net
+    ports:
+      - "8080:8080"
+    #Get data_dir from docker outside.
+    volumes:
+       - ./data_dir:/opt/geoserver/data_dir
+    #Postgres and Pogis.
+    links:
+      - db
+    networks:
+      - webgis
+    environment:
+      - DEBIAN_FRONTEND noninteractive
+      - GDAL_PATH /usr/share/gdal
+      - GEOSERVER_HOME /opt/geoserver
+      - JAVA_HOME /usr
+      - GDAL_DATA $GDAL_PATH/1.10
+      - PATH $GDAL_PATH:$PATH
+      - LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/lib/jni:/usr/share/java
+      - DEBIAN_FRONTEND=noninteractive
+  
+  
+  db:
+    image: kartoza/postgis
+    hostname: db 
+    container_name: db 
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
+      - ./postgres_etc/pg_hba.conf:/etc/postgresql/9.4/main/pg_hba.conf
+    environment:
+      - -e POSTGRES_USER=docker
+        -e POSTGRES_PASS=docker
+    networks:
+      - webgis
+  # command: 
+  #   - /bin/sed -i s:172.17.0.0/16:172.0.0.0/8:g /etc/postgresql/9.4/main/pg_hba.conf
+
+networks:
+  webgis:
+     driver: bridge

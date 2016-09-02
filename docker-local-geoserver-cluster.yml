@@ -1,0 +1,49 @@
+#Maintainer: Juan Zurano <jgzurano@gmail.com>
+version: '2'
+services:
+
+  geoserver:
+    image: webgis/geoserver-cluster
+    volumes:
+       - ./geoserver/data_dir:/opt/geoserver/data_dir
+    networks:
+      - geoserver-cluster
+    environment:
+      - GDAL_PATH=/usr/share/gdal
+      - GEOSERVER_HOME=/opt/geoserver
+      - JAVA_HOME=/usr
+      - JAVA_OPTS=-server -XX:MaxPermSize=128m -Xms512m -Xmx512m -XX:+UseParallelOldGC -XX:NewRatio=2
+      - GDAL_DATA=$GDAL_PATH/1.10
+      - PATH=$GDAL_PATH:$PATH
+      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jni:/usr/share/java
+      - DEBIAN_FRONTEND=noninteractive
+
+  lb:
+    image: dockercloud/haproxy
+    links:
+      - geoserver
+    environment:
+      - MODE=tcp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:80"
+
+  db:
+    image: kartoza/postgis
+    hostname: db 
+    container_name: db 
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
+      - ./postgres_etc/pg_hba.conf:/etc/postgresql/9.4/main/pg_hba.conf
+    environment:
+      - -e POSTGRES_USER=docker
+        -e POSTGRES_PASS=docker
+    networks:
+      - geoserver-cluster
+
+networks:
+  webgis:
+     driver: geoserver-cluster

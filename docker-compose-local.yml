@@ -1,0 +1,51 @@
+version: '2'
+services:
+#Maintainer: jmacchi.
+  
+  #Geoserver
+  geoserver:
+    image: frontec:geoserver
+    container_name: geoserver
+    hostname: geoserver
+    domainname: webgis.frontec.net
+    ports:
+      - "8080:8080"
+    #Get data_dir from docker outside.
+    volumes:
+       - ./data_dir:/opt/geoserver/data_dir
+    #Postgres and Postgis.
+    links:
+      - db
+    networks:
+      - webgis
+    environment:
+      - DEBIAN_FRONTEND noninteractive
+      - GDAL_PATH /usr/share/gdal
+      - GEOSERVER_HOME /opt/geoserver
+      - JAVA_HOME /usr
+      - GDAL_DATA $GDAL_PATH/2.1
+      - PATH $GDAL_PATH:$PATH
+      - LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/lib/jni:/usr/share/java
+      - DEBIAN_FRONTEND=noninteractive
+  
+  
+  db:
+    image: kartoza/postgis:10.0-2.4
+    hostname: db 
+    container_name: db 
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
+      - ./postgres_etc/pg_hba.conf:/etc/postgresql/10/main/pg_hba.conf
+    environment:
+      - -e POSTGRES_USER=docker
+        -e POSTGRES_PASS=docker
+    networks:
+      - webgis
+  # command: 
+  #   - /bin/sed -i s:172.17.0.0/16:172.0.0.0/8:g /etc/postgresql/9.4/main/pg_hba.conf
+
+networks:
+  webgis:
+     driver: bridge

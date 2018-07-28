@@ -32,7 +32,7 @@ services:
   
   
   db:
-    image: kartoza/postgis
+    image: kartoza/postgis:10.0-2.4
     hostname: db 
     container_name: db 
     ports:

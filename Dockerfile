@@ -110,15 +110,10 @@ RUN wget -c https://build.geoserver.org/geoserver/2.13.x/community-latest/geoser
     unzip -o ~/geoserver-gwc-s3-plugin.zip -d /opt/geoserver/webapps/geoserver/WEB-INF/lib/ &&\
     rm ~/geoserver-gwc-s3-plugin.zip
 
-#JdbcStore Plugin (manual url set)
-#RUN wget -c https://build.geoserver.org/geoserver/2.13.x/community-latest/geoserver-2.13-SNAPSHOT-jdbcstore-plugin.zip -O ~/geoserver-jdbcstore-plugin.zip &&\
-#   unzip -o ~/geoserver-jdbcstore-plugin.zip -d /opt/geoserver/webapps/geoserver/WEB-INF/lib/ && \
-#   rm ~/geoserver-jdbcstore-plugin.zip
-
-#Custom Libraries for Molaa  (manual url set, since it's Geoserver 2.11.5 related)
-#RUN wget -c https://repo.boundlessgeo.com/release/org/geoserver/community/gs-sldservice/2.11.5/gs-sldservice-2.11.5.jar -O /opt/geoserver/webapps/geoserver/WEB-INF/lib/gs-sldservice-2.11.5.jar
-#Pending xom-1.1.jar
-#RUN wget -c http://central.maven.org/maven2/xom/xom/1.1/xom-1.1.jar -O /opt/geoserver/webapps/geoserver/WEB-INF/lib/xom-1.1.jar
+#Custom Libraries for Molaa
+COPY ./libs/gs-sldservice-$GEOSERVER_VERSION.zip /tmp/
+RUN unzip -o /tmp/gs-sldservice-$GEOSERVER_VERSION.zip -d /opt/geoserver/webapps/geoserver/WEB-INF/lib/  &&\
+    rm /tmp/gs-sldservice-$GEOSERVER_VERSION.zip
 
 #End Cgastrel requested plugins
 

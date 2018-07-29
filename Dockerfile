@@ -30,7 +30,10 @@ RUN \
   apt-get install -y python-software-properties && \
   add-apt-repository -y ppa:ubuntugis/ppa && \
   apt-get -y update && \
-  apt-get install -y gdal-bin=2.1.3+dfsg-1~xenial2 libgdal-java && \
+  apt-get -y install build-essential && \
+  cd /tmp && wget http://download.osgeo.org/gdal/2.1.4/gdal-2.1.4.tar.gz && tar zxvf gdal-2.1.4.tar.gz && cd gdal-2.1.4 && \
+  ./configure && make && su -c "make install" && su -c "ldconfig" && \
+  apt-get install -y libgdal-java && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /var/cache/oracle-jdk8-installer && \

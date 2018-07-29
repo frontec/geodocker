@@ -115,9 +115,9 @@ RUN wget -c https://build.geoserver.org/geoserver/2.13.x/community-latest/geoser
     rm ~/geoserver-gwc-s3-plugin.zip
 
 #Custom Libraries for Molaa
-COPY ./libs/gs-sldservice-$GEOSERVER_VERSION.zip /tmp/
-RUN unzip -o /tmp/gs-sldservice-$GEOSERVER_VERSION.zip -d /opt/geoserver/webapps/geoserver/WEB-INF/lib/  &&\
-    rm /tmp/gs-sldservice-$GEOSERVER_VERSION.zip
+RUN wget -c https://s3.amazonaws.com/libs.molaa/geoserver-$GEOSERVER_VERSION/gs-sldservice-$GEOSERVER_VERSION.zip -O ~/gs-sldservice-plugin.zip &&\
+    unzip -o ~/gs-sldservice-plugin.zip -d /opt/geoserver/webapps/geoserver/WEB-INF/lib/  &&\
+    rm ~/gs-sldservice-plugin.zip
 
 #End Cgastrel requested plugins
 

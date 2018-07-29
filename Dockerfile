@@ -11,6 +11,7 @@ ENV JAVA_HOME /usr
 ENV GDAL_DATA $GDAL_PATH/2.1
 ENV PATH $GDAL_PATH:$PATH
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/lib/jni:/usr/share/java
+ENV GEOSERVER_NODE_OPTS id:$host_name
 
 RUN export DEBIAN_FRONTEND=noninteractive
 RUN dpkg-divert --local --rename --add /sbin/initctl
